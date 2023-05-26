@@ -78,7 +78,6 @@ class MPS:
             ampState = int(ampStateString)
             return ampState
 
-
     def amptemp(self):
         ''' Query the MPS amplifier temperature
 
@@ -579,7 +578,7 @@ class MPS:
         '''Query the Rx diode reading in dBm
 
         Returns:
-            rxPower (float): Receiver monitor power reading in dBm
+            rxPower (float): Reciever monitor power reading in dBm
 
         Example::
 
@@ -846,6 +845,17 @@ class MPS:
             wgStatusReadingString = self.send_command('wgstatus?',recv = True)
             wgStatusReading = int(wgStatusReadingString)
             return wgStatusReading
+        
+    def __del__(self):
+        self.lockstatus(0)           # Turn off the MPS frequency softlock
+        time.sleep(0.1)
+        self.power(0)                # Set MW power to 0
+        time.sleep(0.1)
+        self.rfstatus(0)             # Turn off MW
+        time.sleep(0.1)
+        self.wgstatus(0)             # Turn off EPR/DNP mode
+        time.sleep(0.1)
+        self.close()                 # Closes the serial port
 
 if __name__ == '__main__':
     pass
